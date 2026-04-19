@@ -4,12 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>직류변환공학 OX 퀴즈</title>
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>직류변환공학 OX 퀴즈</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -41,7 +35,7 @@ body {
 .sub-title { font-size: 0.9rem; color: rgba(255,255,255,0.5); margin-bottom: 40px; }
 
 /* 챕터 선택 */
-.chapter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 32px; }
+.chapter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
 .ch-btn {
   background: rgba(255,255,255,0.06);
   border: 1.5px solid rgba(255,255,255,0.18);
@@ -62,6 +56,7 @@ body {
 .ch-name { font-size: 0.72rem; color: rgba(255,255,255,0.55); margin-top: 6px; line-height: 1.4; }
 .ch-count { font-size: 0.7rem; color: rgba(255,255,255,0.35); margin-top: 4px; }
 
+.btn-area { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .start-btn {
   background: linear-gradient(135deg, #00d2ff, #7b2ff7);
   color: #fff; border: none; border-radius: 50px;
@@ -70,6 +65,16 @@ body {
 }
 .start-btn.active { opacity: 1; pointer-events: auto; }
 .start-btn.active:hover { transform: scale(1.04); box-shadow: 0 8px 30px rgba(0,210,255,0.3); }
+.hard-btn {
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-radius: 50px;
+  padding: 11px 32px; font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 7px;
+}
+.hard-btn:hover { border-color: #f97316; color: #f97316; background: rgba(249,115,22,0.08); transform: scale(1.03); }
 
 /* 퀴즈 화면 */
 #quiz-screen { display: none; position: relative; }
@@ -208,8 +213,16 @@ body {
       <div class="ch-name">반파 정류기 회로 분석</div>
       <div class="ch-count">30문제</div>
     </div>
+    <div class="ch-btn" onclick="selectChapter(4)">
+      <div class="ch-num">CH4</div>
+      <div class="ch-name">전파 정류기 회로 분석</div>
+      <div class="ch-count">30문제</div>
+    </div>
   </div>
-  <button class="start-btn" id="start-btn" onclick="startQuiz()">시작하기</button>
+  <div class="btn-area">
+    <button class="start-btn" id="start-btn" onclick="startQuiz()">시작하기</button>
+    <button class="hard-btn" onclick="startHardQuiz()">&#x1F525; 어려운 랜덤퀴즈</button>
+  </div>
 </div>
 
 <!-- 퀴즈 -->
@@ -259,103 +272,168 @@ body {
 // ===================== 문제 데이터 =====================
 const QUESTIONS = {
   1: [
-    { text:"전력전자 회로는 반도체 소자를 스위치로 사용하여 전기에너지를 변환한다.", answer:true, tag:"전력전자 개요", exp:"전력전자 회로는 반도체 소자를 ON/OFF 스위치로 이용해 전압·전류를 변환·제어합니다. 이상적인 스위치에서는 에너지 손실이 없습니다." },
-    { text:"전압 분배기(Voltage Divider)를 이용한 DC 변환은 효율이 높아 전력변환에 적합하다.", answer:false, tag:"전력전자 개요", exp:"전압 분배기는 저항에서 열로 에너지가 소모되어 효율이 매우 낮습니다. 9V→3V 변환 시 약 33% 효율에 불과합니다." },
-    { text:"전력전자 설계에는 회로이론, 제어이론, 전자기학, 마이크로프로세서, 열전달이 모두 포함된다.", answer:true, tag:"전력전자 개요", exp:"강의자료에 명시된 대로 전력변환 설계는 전기공학, 회로이론, 제어이론, 전자공학, 전자기학, 마이크로프로세서, 열전달을 포함하는 복합 학문입니다." },
-    { text:"AC→DC 변환기를 인버터(Inverter)라고 한다.", answer:false, tag:"컨버터 분류", exp:"AC→DC는 정류기(Rectifier)입니다. 인버터(Inverter)는 DC→AC 변환기입니다. 예: 12V 배터리로 220V 60Hz를 만드는 것이 인버터입니다." },
-    { text:"DC→DC 컨버터는 비조정 DC 입력에서 조정된 DC 출력을 생성한다.", answer:true, tag:"컨버터 분류", exp:"DC/DC 컨버터의 역할입니다. 예: 12V 배터리에서 5V를 만드는 것이 DC/DC 컨버터입니다." },
-    { text:"AC→AC 컨버터는 반드시 DC를 거쳐 변환해야 하므로 멀티스텝 변환이 필요하다.", answer:true, tag:"컨버터 분류", exp:"AC를 직접 다른 AC로 바꾸기 어려워 AC/DC + DC/AC 멀티스텝 변환 방식을 사용합니다. 강의 필기에도 '여기페이지는 이거만 함'으로 표시되어 있습니다." },
-    { text:"스위칭 회로에서 듀티비(Duty Cycle) 1/3으로 설정하면 9V 전원으로부터 평균 3V를 얻을 수 있다.", answer:true, tag:"스위칭 회로", exp:"평균 전압 = 입력 전압 × 듀티비 = 9V × 1/3 = 3V입니다. 한 주기 T 중 T/3 시간만 스위치를 켜면 됩니다." },
-    { text:"이상적인 스위치는 ON 상태에서 전압이 0, OFF 상태에서 전류가 0이므로 소비 전력이 항상 0이다.", answer:true, tag:"전자 스위치", exp:"P = V × I이므로 ON시 V=0→P=0, OFF시 I=0→P=0입니다. 이상적 스위치는 에너지를 소모하지 않아 효율 100%를 달성합니다." },
-    { text:"실제 스위치의 스위칭 손실은 ON→OFF 또는 OFF→ON 천이 구간에서 발생한다.", answer:true, tag:"전자 스위치", exp:"실제 스위치는 천이 시간이 수 ns~ms이며, 이 구간에서 전압과 전류가 동시에 존재하여 스위칭 손실(Switching Loss)이 발생합니다." },
-    { text:"다이오드는 게이트 신호로 ON/OFF를 완전히 제어할 수 있는 능동 스위치이다.", answer:false, tag:"다이오드", exp:"다이오드는 비제어(Uncontrollable) 스위치로, 회로의 전압·전류 조건에 의해 자동으로 ON/OFF가 결정됩니다. 게이트 단자가 없습니다." },
-    { text:"다이오드의 순방향 바이어스 상태에서 이상적으로는 단락회로(Short Circuit)로 동작한다.", answer:true, tag:"다이오드", exp:"이상 다이오드는 순방향 바이어스 시 단락(V=0), 역방향 바이어스 시 개방(I=0)으로 동작합니다." },
-    { text:"다이오드의 역회복(Reverse Recovery) 현상은 다이오드가 턴온될 때 발생한다.", answer:false, tag:"다이오드", exp:"역회복(Reverse Recovery)은 다이오드가 턴오프될 때 발생합니다. 전류가 감소하다가 잠시 음수가 된 후 0이 되는 현상으로, 다이오드의 주요 스위칭 손실 원인입니다." },
-    { text:"SiC 다이오드는 Si 다이오드보다 총 전하량(Total Charge)이 훨씬 작아 스위칭 손실이 적다.", answer:true, tag:"다이오드", exp:"강의자료 비교표에서 Si 다이오드(2630nC) vs SiC 다이오드(154nC)로 SiC가 약 17배 적은 총 전하량을 가져 역회복 손실이 훨씬 작습니다." },
-    { text:"사이리스터(SCR)는 게이트 신호로 턴온과 턴오프 모두 제어할 수 있다.", answer:false, tag:"사이리스터", exp:"SCR은 게이트 신호로 턴온은 제어할 수 있지만, 턴오프는 제어하기 어렵습니다. 애노드 전류가 유지 레벨 이상이면 계속 도통합니다. GTO는 턴오프도 가능합니다." },
-    { text:"사이리스터(SCR)는 턴온 후 게이트 전류를 제거해도 애노드 전류가 유지 레벨 이상이면 계속 도통한다.", answer:true, tag:"사이리스터", exp:"SCR의 중요한 특성입니다. 도통이 시작되면 게이트 신호 없이도 애노드 전류가 유지 레벨(Holding Level) 이상인 한 계속 도통합니다." },
-    { text:"MOSFET은 전류 제어 소자로, 충분한 베이스 전류를 공급하면 턴온된다.", answer:false, tag:"MOSFET", exp:"MOSFET은 전압 제어 소자입니다. 게이트-소스 전압(V_GS)으로 제어합니다. 전류 제어 소자는 BJT입니다." },
-    { text:"MOSFET은 구조적으로 기생 바디 다이오드(Body Diode)를 내장하고 있어 전력전자 회로에서 유리하다.", answer:true, tag:"MOSFET", exp:"MOSFET 내부에는 기생 바디 다이오드가 존재합니다. 이를 프리휠링 다이오드로 활용할 수 있어 전력전자 회로 설계에 유리합니다." },
-    { text:"MOSFET의 ON 상태에서 드레인-소스 전압(V_DS)은 드레인 전류(I_D)에 선형 비례한다.", answer:true, tag:"MOSFET", exp:"ON 상태에서 R_DSon = V_DS / I_D로 정의됩니다. R_DSon이 작을수록 도통 손실이 적습니다. R_DSon은 온도와 게이트 전압에 따라 변합니다." },
-    { text:"Si MOSFET은 SiC MOSFET보다 최대 드레인-소스 전압(V_DS max)이 더 높다.", answer:false, tag:"MOSFET", exp:"강의자료의 비교표에서 두 소자 모두 650V로 동일하거나, SiC가 더 높은 전압 정격을 가질 수 있습니다. SiC의 주요 장점은 높은 내압과 낮은 스위칭 손실입니다." },
-    { text:"SiC MOSFET은 Si MOSFET보다 턴온 지연시간(Turn-on Delay Time)이 훨씬 짧다.", answer:true, tag:"MOSFET", exp:"강의자료 비교표에서 Si MOSFET(54ns) vs SiC MOSFET(7ns)으로 SiC가 약 8배 빠른 턴온 지연시간을 가집니다." },
-    { text:"BJT(Bipolar Junction Transistor)는 전류 제어 소자로 베이스 전류로 동작을 제어한다.", answer:true, tag:"BJT", exp:"BJT는 전류 제어 소자입니다. 충분한 베이스 전류를 공급하여 포화 상태로 만들어 턴온합니다. 베이스 전류를 0으로 하면 턴오프됩니다." },
-    { text:"Power BJT의 hFE(전류증폭률)는 매우 높아 작은 베이스 전류로 큰 컬렉터 전류를 제어할 수 있다.", answer:false, tag:"BJT", exp:"Power BJT의 hFE는 약 20으로 낮습니다. 60A의 컬렉터 전류를 위해 3A 이상의 베이스 전류가 필요합니다. 이 때문에 구동 회로가 복잡해집니다." },
-    { text:"현재 신규 전력전자 응용에서 Power BJT는 MOSFET과 IGBT에 의해 대체되어 거의 사용되지 않는다.", answer:true, tag:"BJT", exp:"강의자료에 명시된 내용입니다. Power BJT는 MOSFET과 IGBT의 발전으로 신규 응용에서는 거의 사용되지 않습니다." },
-    { text:"IGBT는 MOSFET의 구동 회로 특성과 BJT의 ON 상태 특성을 결합한 소자이다.", answer:true, tag:"IGBT", exp:"IGBT(Insulated Gate Bipolar Transistor)는 MOSFET처럼 전압으로 구동하고, ON 상태 특성은 BJT와 유사합니다. 고전압·대전류 응용에 적합합니다." },
-    { text:"IGBT는 MOSFET보다 더 높은 스위칭 주파수로 동작할 수 있다.", answer:false, tag:"IGBT", exp:"IGBT의 스위칭 주파수는 약 20kHz 수준으로 MOSFET(~1.2MHz)보다 낮습니다. 대신 IGBT는 최대 6.5kV, 4kA의 고전압·대전류를 처리할 수 있습니다." },
-    { text:"Buck 컨버터의 출력 전압은 V_o = V_s × D이다. (D: 듀티비)", answer:true, tag:"컨버터 공식", exp:"Buck(강압) 컨버터의 기본 공식입니다. D가 0~1 사이이므로 출력이 항상 입력보다 낮습니다." },
-    { text:"Boost 컨버터의 출력 전압은 V_o = V_s × (1-D)이다.", answer:false, tag:"컨버터 공식", exp:"Boost(승압) 컨버터의 공식은 V_o = V_s / (1-D)입니다. D가 증가할수록 출력 전압이 높아집니다." },
-    { text:"고주파 스위칭을 사용하면 필터(L, C)의 크기를 줄일 수 있다.", answer:true, tag:"스위칭 회로", exp:"필터의 차단 주파수 f = 1/(2π√LC)에서, 스위칭 주파수가 높을수록 같은 차단 주파수를 달성하기 위해 필요한 L, C 값이 작아져 소형화가 가능합니다." },
-    { text:"피드백 제어를 사용하면 부하 변동에 관계없이 일정한 출력 전압을 유지할 수 있다.", answer:true, tag:"스위칭 회로", exp:"피드백(Feedback) 제어는 출력 전압을 측정하여 듀티비를 조정함으로써 부하 변동이나 입력 전압 변동에도 일정한 출력을 유지합니다." },
-    { text:"MOSFET의 R_DSon은 온도가 높아질수록 감소한다.", answer:false, tag:"MOSFET", exp:"R_DSon은 온도가 높아질수록 증가합니다. 이것은 Si MOSFET의 특성으로, 온도 상승 시 도통 손실이 증가합니다. SiC MOSFET도 동일한 경향을 보입니다." },
-    { text:"EV 충전기, 휴대폰 충전기, PC 전원공급장치는 모두 정류기(Rectifier) 응용의 예이다.", answer:true, tag:"전력전자 개요", exp:"이 기기들은 모두 AC 전원을 DC로 변환하는 정류기(Rectifier, AC→DC)를 포함하고 있습니다. 강의자료에 명시된 예시입니다." }
+    { text:"문제 1", answer:true,  tag:"CH1", exp:"해설 1" },
+    { text:"문제 2", answer:false, tag:"CH1", exp:"해설 2" },
+    { text:"문제 3", answer:true,  tag:"CH1", exp:"해설 3" },
+    { text:"문제 4", answer:false, tag:"CH1", exp:"해설 4" },
+    { text:"문제 5", answer:true,  tag:"CH1", exp:"해설 5" },
+    { text:"문제 6", answer:false, tag:"CH1", exp:"해설 6" },
+    { text:"문제 7", answer:true,  tag:"CH1", exp:"해설 7" },
+    { text:"문제 8", answer:false, tag:"CH1", exp:"해설 8" },
+    { text:"문제 9", answer:true,  tag:"CH1", exp:"해설 9" },
+    { text:"문제 10", answer:false, tag:"CH1", exp:"해설 10" },
+    { text:"문제 11", answer:true,  tag:"CH1", exp:"해설 11" },
+    { text:"문제 12", answer:false, tag:"CH1", exp:"해설 12" },
+    { text:"문제 13", answer:true,  tag:"CH1", exp:"해설 13" },
+    { text:"문제 14", answer:false, tag:"CH1", exp:"해설 14" },
+    { text:"문제 15", answer:true,  tag:"CH1", exp:"해설 15" },
+    { text:"문제 16", answer:false, tag:"CH1", exp:"해설 16" },
+    { text:"문제 17", answer:true,  tag:"CH1", exp:"해설 17" },
+    { text:"문제 18", answer:false, tag:"CH1", exp:"해설 18" },
+    { text:"문제 19", answer:true,  tag:"CH1", exp:"해설 19" },
+    { text:"문제 20", answer:false, tag:"CH1", exp:"해설 20" },
+    { text:"문제 21", answer:true,  tag:"CH1", exp:"해설 21" },
+    { text:"문제 22", answer:false, tag:"CH1", exp:"해설 22" },
+    { text:"문제 23", answer:true,  tag:"CH1", exp:"해설 23" },
+    { text:"문제 24", answer:false, tag:"CH1", exp:"해설 24" },
+    { text:"문제 25", answer:true,  tag:"CH1", exp:"해설 25" },
+    { text:"문제 26", answer:false, tag:"CH1", exp:"해설 26" },
+    { text:"문제 27", answer:true,  tag:"CH1", exp:"해설 27" },
+    { text:"문제 28", answer:false, tag:"CH1", exp:"해설 28" },
+    { text:"문제 29", answer:true,  tag:"CH1", exp:"해설 29" },
+    { text:"문제 30", answer:false, tag:"CH1", exp:"해설 30" },
   ],
   2: [
-    { text:"순시전력(Instantaneous Power)은 p(t) = v(t) × i(t)로 정의된다.", answer:true, tag:"전력 계산", exp:"순시전력의 정의입니다. 단위는 와트[W] = 볼트[V] × 암페어[A]입니다." },
-    { text:"수동 부호 규약(Passive Sign Convention)에서 전류가 + 단자로 들어가면 양의 전력은 공급을 의미한다.", answer:false, tag:"전력 부호", exp:"수동 부호 규약에서 전류가 + 단자로 들어가고 p>0이면 '전력 흡수'를 의미합니다. p<0이면 전력 공급입니다. 강의 필기에서 '수동 부호 약속: p>0 → 전력을 흡수'로 명시되어 있습니다." },
-    { text:"에너지(W)는 순시전력을 시간에 대해 적분한 값이다.", answer:true, tag:"전력 계산", exp:"W = ∫p(t)dt입니다. 단위는 [J] = [Ws]입니다. 에너지는 일(Work)과 동일한 개념입니다." },
-    { text:"평균전력(Average Power)은 순시전력을 한 주기 T 동안 시간 평균한 값이다.", answer:true, tag:"전력 계산", exp:"P = (1/T)∫p(t)dt = W/T입니다. 평균전력은 실전력(Real Power)이라고도 하며, AC 회로에서는 유효전력이라고 합니다." },
-    { text:"DC 전압원의 평균 흡수 전력은 P_dc = V_dc × I_rms이다.", answer:false, tag:"전력 계산", exp:"DC 전압원의 평균 흡수 전력은 P_dc = V_dc × I_avg입니다. DC 전압원에는 평균 전류(I_avg)를 사용해야 합니다." },
-    { text:"주기적인 전류가 흐르는 이상 인덕터의 평균 흡수 전력은 0이다.", answer:true, tag:"인덕터", exp:"주기적 전류에서 인덕터의 저장 에너지는 주기 시작과 끝이 동일하므로 순 에너지 이동이 0입니다. 따라서 P_L = (1/T)[w(t+T)-w(t)] = 0입니다." },
-    { text:"인덕터에 주기적인 전류가 흐를 때 한 주기 동안 인덕터 양단의 평균 전압은 0이다.", answer:true, tag:"인덕터", exp:"i(t₀+T)-i(t₀)=0이면, (L/T)∫v_L dt = 0이므로 평균 전압 V_L = 0입니다. 이를 Volt-Second Balance라 합니다." },
-    { text:"커패시터에 주기적인 전압이 걸릴 때 커패시터를 흐르는 평균 전류는 0이다.", answer:true, tag:"커패시터", exp:"v(t₀+T)-v(t₀)=0이므로 (C/T)∫i_C dt = 0, 즉 평균 전류 I_C = 0입니다. 이를 Amp-Second Balance(전하 균형)라 합니다." },
-    { text:"주기적인 전압이 걸리는 이상 커패시터의 평균 흡수 전력은 0이 아니다.", answer:false, tag:"커패시터", exp:"이상 커패시터는 에너지를 저장하고 방출할 뿐, 소비하지 않습니다. P_C = (1/T)[w(t+T)-w(t)] = 0입니다." },
-    { text:"실효값(RMS)은 같은 저항에 동일한 평균전력을 공급하는 DC값으로 정의된다.", answer:true, tag:"실효값 RMS", exp:"RMS의 정의입니다. V_rms = √(1/T × ∫v²dt)이며, '제곱의 평균의 제곱근(Root Mean Square)'입니다." },
-    { text:"정현파 v(t) = Vm sin(ωt)의 RMS 전압은 Vm/√2이다.", answer:true, tag:"실효값 RMS", exp:"정현파와 전파 정류파의 RMS값은 V_rms = Vm/√2 ≈ 0.707Vm입니다. 220V 가정용 전압의 최댓값은 약 311V입니다." },
-    { text:"듀티비 D를 가지는 구형파의 RMS값은 Vm × D이다.", answer:false, tag:"실효값 RMS", exp:"듀티비 D인 구형파의 RMS값은 V_rms = Vm√D입니다. D=1이면 Vm(DC), D=1/4이면 Vm/2입니다." },
-    { text:"반파 정류된 정현파의 RMS값은 Vm/2이다.", answer:true, tag:"실효값 RMS", exp:"반파 정류파는 V_rms = Vm/2입니다. 전파 정류(Vm/√2)보다 작습니다. 강의자료에서 직접 유도된 결과입니다." },
-    { text:"서로 다른 주파수를 가진 두 정현파의 곱을 한 주기 동안 평균하면 0이 된다.", answer:true, tag:"비정현파 전력", exp:"다른 주파수의 정현파는 직교(Orthogonal)합니다. 이 때문에 평균전력은 같은 주파수 성분끼리만 기여하고, 다른 주파수 성분 사이에는 전력이 전달되지 않습니다." },
-    { text:"피상전력(Apparent Power) S = V_rms × I_rms이며 단위는 VA이다.", answer:true, tag:"전력인수", exp:"피상전력은 S = V_rms × I_rms [VA]입니다. 실제 부하가 소비하는 유효전력(P)과 달리 전원 설비 용량을 나타냅니다." },
-    { text:"3상 피상전력은 S = √3 × V_ll,rms × I_l,rms이다.", answer:true, tag:"전력인수", exp:"3상 피상전력 공식입니다. 상전압(V_rms)과 선전류(I_rms)를 이용하면 S = 3 × V_rms × I_rms = √3 × V_ll,rms × I_l,rms입니다." },
-    { text:"선형 AC 회로에서 역률(Power Factor)은 항상 cos(θ-φ)와 같다.", answer:true, tag:"전력인수", exp:"선형 회로(정현파 전원, 선형 부하)에서는 pf = P/S = cos(θ-φ)입니다. 비선형 부하에서는 고조파의 영향으로 달라집니다." },
-    { text:"비선형 부하의 역률은 변위전력인수(DPF)와 왜형률계수(DF)의 곱이다.", answer:true, tag:"비정현파 전력", exp:"비선형 부하에서 pf = DF × DPF입니다. DPF = cos(θ₁-φ₁)은 기본파 위상차, DF = I₁,rms/I_rms는 왜형률계수입니다." },
-    { text:"총고조파왜형률(THD)이 클수록 왜형률계수(DF)는 커진다.", answer:false, tag:"비정현파 전력", exp:"DF = 1/√(1+THD²)이므로 THD가 증가할수록 DF는 감소합니다. THD=0이면 DF=1, THD가 크면 DF→0입니다." },
-    { text:"서로 다른 주파수의 전압 성분이 여러 개 있을 때, 전체 RMS는 각 성분 RMS의 합이다.", answer:false, tag:"실효값 RMS", exp:"서로 직교하는 성분들의 전체 RMS는 각 성분 RMS의 제곱합의 제곱근입니다. V_rms = √(V₁²+V₂²+V₃²+...)입니다." },
-    { text:"삼각파 전류의 RMS값은 I_m/√3이다.", answer:true, tag:"실효값 RMS", exp:"삼각파의 RMS값은 I_rms = I_m/√3입니다. 강의자료에 명시된 공식으로, DC 전력 회로에서 자주 등장하는 파형입니다." },
-    { text:"DC 성분이 있는 오프셋 삼각파의 RMS값은 √(I_dc² + I_ac²)이다.", answer:true, tag:"실효값 RMS", exp:"서로 직교하는 DC 성분과 AC 성분(삼각파)의 RMS는 I_rms = √(I_dc² + (I_m/√3)²)입니다. 강의 Ex.2-8에서 다룬 내용입니다." },
-    { text:"비정현파 주기 전압과 전류에서 평균전력은 모든 주파수 성분 쌍의 기여를 합산한다.", answer:false, tag:"비정현파 전력", exp:"평균전력은 같은 주파수 성분끼리만 기여합니다. P = V₀I₀ + Σ V_n,rms × I_n,rms × cos(θ_n-φ_n)으로, 다른 주파수 성분 간 교차항은 0입니다." },
-    { text:"이상 인덕터에서 순시전력이 0이 아닐 수 있다.", answer:true, tag:"인덕터", exp:"이상 인덕터의 평균 전력은 0이지만, 순시전력은 에너지를 흡수하거나 방출하는 구간에서 0이 아닐 수 있습니다. 에너지를 임시 저장했다가 돌려주는 방식입니다." },
-    { text:"역률(Power Factor)이 1이면 부하는 순수 저항성이다.", answer:true, tag:"전력인수", exp:"pf = 1은 전압과 전류가 완전히 동위상임을 의미합니다. 이는 순수 저항(R)에서만 발생하며, 인덕터나 커패시터가 없거나 완전히 보상된 경우입니다." },
-    { text:"커패시터는 전압에 비례하는 에너지를 저장하며, 저장 에너지는 (1/2)CV²이다.", answer:true, tag:"커패시터", exp:"커패시터의 저장 에너지 공식입니다. w(t) = (1/2)Cv²(t)이며, 전압의 제곱에 비례합니다." },
-    { text:"인덕터는 전류에 비례하는 에너지를 저장하며, 저장 에너지는 (1/2)LI²이다.", answer:true, tag:"인덕터", exp:"인덕터의 저장 에너지 공식입니다. w(t) = (1/2)Li²(t)이며, 전류의 제곱에 비례합니다." },
-    { text:"Fourier 급수는 비정현파 주기 파형을 정현파들의 합으로 표현하는 방법이다.", answer:true, tag:"비정현파 전력", exp:"Fourier 급수는 비정현파 주기 함수를 DC 성분과 여러 주파수의 정현파 성분의 합으로 분해합니다. 전력전자에서 비선형 부하 분석에 핵심 도구입니다." },
-    { text:"왜형전력(Distortion Power) D는 전원전압의 기본파와 부하전류의 고조파 성분 사이에서 발생한다.", answer:true, tag:"비정현파 전력", exp:"정현파 전원에 비선형 부하가 연결되면 전류에 고조파가 발생합니다. 이때 피상전력 S = √(P²+Q²+D²)으로 왜형전력 D가 포함됩니다." },
-    { text:"형상률(Form Factor)은 RMS 전류를 최댓값 전류로 나눈 값이다.", answer:false, tag:"실효값 RMS", exp:"형상률(Form Factor) = I_rms / I_avg입니다. 파고율(Crest Factor) = I_peak / I_rms입니다. 이 둘을 혼동하지 않도록 주의하세요." }
+    { text:"문제 1", answer:true,  tag:"CH2", exp:"해설 1" },
+    { text:"문제 2", answer:false, tag:"CH2", exp:"해설 2" },
+    { text:"문제 3", answer:true,  tag:"CH2", exp:"해설 3" },
+    { text:"문제 4", answer:false, tag:"CH2", exp:"해설 4" },
+    { text:"문제 5", answer:true,  tag:"CH2", exp:"해설 5" },
+    { text:"문제 6", answer:false, tag:"CH2", exp:"해설 6" },
+    { text:"문제 7", answer:true,  tag:"CH2", exp:"해설 7" },
+    { text:"문제 8", answer:false, tag:"CH2", exp:"해설 8" },
+    { text:"문제 9", answer:true,  tag:"CH2", exp:"해설 9" },
+    { text:"문제 10", answer:false, tag:"CH2", exp:"해설 10" },
+    { text:"문제 11", answer:true,  tag:"CH2", exp:"해설 11" },
+    { text:"문제 12", answer:false, tag:"CH2", exp:"해설 12" },
+    { text:"문제 13", answer:true,  tag:"CH2", exp:"해설 13" },
+    { text:"문제 14", answer:false, tag:"CH2", exp:"해설 14" },
+    { text:"문제 15", answer:true,  tag:"CH2", exp:"해설 15" },
+    { text:"문제 16", answer:false, tag:"CH2", exp:"해설 16" },
+    { text:"문제 17", answer:true,  tag:"CH2", exp:"해설 17" },
+    { text:"문제 18", answer:false, tag:"CH2", exp:"해설 18" },
+    { text:"문제 19", answer:true,  tag:"CH2", exp:"해설 19" },
+    { text:"문제 20", answer:false, tag:"CH2", exp:"해설 20" },
+    { text:"문제 21", answer:true,  tag:"CH2", exp:"해설 21" },
+    { text:"문제 22", answer:false, tag:"CH2", exp:"해설 22" },
+    { text:"문제 23", answer:true,  tag:"CH2", exp:"해설 23" },
+    { text:"문제 24", answer:false, tag:"CH2", exp:"해설 24" },
+    { text:"문제 25", answer:true,  tag:"CH2", exp:"해설 25" },
+    { text:"문제 26", answer:false, tag:"CH2", exp:"해설 26" },
+    { text:"문제 27", answer:true,  tag:"CH2", exp:"해설 27" },
+    { text:"문제 28", answer:false, tag:"CH2", exp:"해설 28" },
+    { text:"문제 29", answer:true,  tag:"CH2", exp:"해설 29" },
+    { text:"문제 30", answer:false, tag:"CH2", exp:"해설 30" },
   ],
   3: [
-    { text:"반파 정류기(Half-Wave Rectifier)는 AC의 양의 반주기만 부하에 전달한다.", answer:true, tag:"반파정류기 개요", exp:"반파 정류기는 다이오드 하나로 구성되며, 양의 반주기에만 다이오드가 순방향 바이어스되어 전류가 흐릅니다. 음의 반주기에는 전류가 흐르지 않습니다." },
-    { text:"저항 부하 반파 정류기에서 출력 전압의 평균값은 V_o = Vm/π이다.", answer:true, tag:"저항 부하", exp:"V_avg = (1/2π)∫₀^π Vm sin(ωt) d(ωt) = Vm/π입니다. 강의자료에 명시된 공식입니다." },
-    { text:"저항 부하 반파 정류기에서 출력 전압의 RMS값은 Vm/π이다.", answer:false, tag:"저항 부하", exp:"저항 부하 반파 정류기의 RMS 전압은 V_rms = Vm/2입니다. 평균값 Vm/π와 구분해야 합니다." },
-    { text:"저항 부하 반파 정류기의 역률(Power Factor)은 1/√2 = 0.707이다.", answer:true, tag:"저항 부하", exp:"Ex.3-1에서 pf = P/S = 1440/(120×17) ≈ 0.707 = 1/√2임을 확인할 수 있습니다. 이는 반파 정류 시 전류의 RMS와 최댓값의 관계에서 비롯됩니다." },
-    { text:"RL 부하 반파 정류기에서 인덕터가 있으면 전류는 전원 전압이 0이 된 후에도 계속 흐른다.", answer:true, tag:"RL 부하", exp:"인덕터에 저장된 에너지가 방출되면서 전압이 음이 된 후에도 전류가 지속됩니다. 소호각(β)은 항상 π보다 큽니다." },
-    { text:"RL 부하 반파 정류기의 전류는 강제 응답(Forced Response)과 자연 응답(Natural Response)의 합으로 구한다.", answer:true, tag:"RL 부하", exp:"i(t) = i_f(t) + i_n(t)입니다. 강제 응답은 정상상태 정현파 전류, 자연 응답은 Ae^(-t/τ) 형태의 과도 응답입니다. 강의자료에 명시된 풀이 방법입니다." },
-    { text:"RL 부하 반파 정류기에서 시정수 τ = L/R이 클수록 소호각(β)이 작아진다.", answer:false, tag:"RL 부하", exp:"τ = L/R이 클수록 자연 응답이 천천히 감소하여 전류가 더 오래 흐릅니다. 따라서 소호각 β가 커지고 도통 구간이 길어집니다." },
-    { text:"RL 부하 반파 정류기에서 소호각(β, Extinction Angle)은 전류가 0이 되는 각도이다.", answer:true, tag:"RL 부하", exp:"β는 전류가 0으로 돌아오는 각도로, sin(β-θ) + sin(θ)e^(-β/ωτ) = 0을 수치적으로 풀어 구합니다." },
-    { text:"RL 소스 부하 반파 정류기에서 다이오드는 AC 전압이 0이 되는 순간 도통을 시작한다.", answer:false, tag:"RL-소스 부하", exp:"AC 전압이 DC 전압(V_dc)보다 높아지는 각도 α = sin⁻¹(V_dc/Vm)에서 도통을 시작합니다. AC 전압이 DC 전압보다 낮을 때는 다이오드가 역방향 바이어스됩니다." },
-    { text:"RL 소스 부하 반파 정류기에서 AC 전원이 공급하는 전력은 P_ac = I²_rms·R + I_o·V_dc이다.", answer:true, tag:"RL-소스 부하", exp:"전력 보존에 의해 AC 전원이 공급하는 전력은 저항 소비 전력(I²_rms·R)과 DC 소스 흡수 전력(I_o·V_dc)의 합과 같습니다. 강의 필기에 명시된 식입니다." },
-    { text:"인덕터-소스 부하 반파 정류기에서 저항이 없으면 AC 전원이 공급하는 전력은 DC 소스가 흡수하는 전력과 같다.", answer:true, tag:"인덕터-소스 부하", exp:"이상적인 인덕터와 다이오드는 에너지를 소비하지 않으므로, AC 전원 공급 전력 = DC 소스 흡수 전력이 됩니다. 강의자료에 명시된 이 회로의 특징입니다." },
-    { text:"프리휠링 다이오드(Freewheeling Diode)는 RL 부하와 병렬로 연결하여 음의 출력 전압을 방지한다.", answer:true, tag:"프리휠링 다이오드", exp:"프리휠링 다이오드(D₂)는 전원이 음이 될 때 도통하여 부하 전압을 0으로 유지합니다. 인덕터 에너지는 D₂를 통해 부하에서 소모됩니다." },
-    { text:"프리휠링 다이오드가 있는 회로에서 D1과 D2는 동시에 도통될 수 있다.", answer:false, tag:"프리휠링 다이오드", exp:"D1과 D2는 동시에 도통될 수 없습니다. KVL에 의해 하나가 도통되면 나머지는 반드시 역방향 바이어스가 됩니다." },
-    { text:"프리휠링 다이오드가 있는 회로에서 부하 전압은 반파 정류된 사인파 형태가 된다.", answer:true, tag:"프리휠링 다이오드", exp:"전원이 양수일 때 v_o = v_s, 음수일 때 v_o = 0이므로 부하 전압은 반파 정류된 사인파입니다. 이로 인해 평균 출력 전압은 Vm/π입니다." },
-    { text:"프리휠링 다이오드가 있는 회로에서 정상 상태 전류는 회로가 처음 켜진 순간부터 바로 나타난다.", answer:false, tag:"프리휠링 다이오드", exp:"회로 처음 켜질 때 부하 전류는 0이며, L/R 시정수에 따라 몇 주기 후 정상 상태(Steady State)에 도달합니다. 강의자료 Fig.3-8에 이 과도 응답이 나타나 있습니다." },
-    { text:"커패시터 필터가 있는 반파 정류기에서 커패시터는 다이오드 도통 시 전원으로부터 충전된다.", answer:true, tag:"커패시터 필터", exp:"다이오드가 도통되는 구간에서 v_o = v_s이고, 커패시터는 전원 전압으로 충전됩니다. 최대 Vm까지 충전된 후 다이오드가 차단되면 RC 시정수로 방전됩니다." },
-    { text:"커패시터 필터 반파 정류기에서 커패시터 용량이 클수록 출력 전압 리플(Ripple)이 작아진다.", answer:true, tag:"커패시터 필터", exp:"ΔV_o ≈ Vm/(fRC)에서 C가 클수록 리플이 작아집니다. 단, C가 커질수록 다이오드의 도통 시간이 짧아지고 피크 전류가 커집니다." },
-    { text:"커패시터 필터 반파 정류기에서 다이오드 평균 전류는 부하 평균 전류보다 크다.", answer:false, tag:"커패시터 필터", exp:"커패시터의 평균 전류는 0이므로, 다이오드 평균 전류 = 부하 저항 평균 전류와 같습니다. 단, 피크 전류는 평균보다 훨씬 큽니다." },
-    { text:"커패시터 필터 반파 정류기에서 다이오드가 꺼지는 각도 θ는 tan(θ) = -1/(ωRC)를 만족한다.", answer:true, tag:"커패시터 필터", exp:"다이오드가 꺼지는 순간 전원 전압과 커패시터 전압의 기울기가 같아야 합니다. 이 조건에서 tan(θ) = -ωRC를 유도하면 1/tan(θ) = -ωRC입니다." },
-    { text:"커패시터 필터 반파 정류기에서 리플 전압은 근사적으로 ΔV_o ≈ Vm/(fRC)이다.", answer:true, tag:"커패시터 필터", exp:"ωRC >> 1인 경우 지수 함수를 급수 전개하면 ΔV_o ≈ Vm(2π/ωRC) = Vm/(fRC)로 근사됩니다. 강의자료 식(3-51)에 해당합니다." },
-    { text:"제어형 반파 정류기에서 SCR은 순방향 바이어스와 게이트 신호가 모두 있어야 도통된다.", answer:true, tag:"제어형 정류기", exp:"SCR 도통 조건: ① 순방향 바이어스(V_SCR > 0), ② 게이트 신호 인가. 두 조건이 모두 충족되어야 도통됩니다." },
-    { text:"제어형 반파 정류기에서 지연각(α)이 클수록 출력 평균 전압이 높아진다.", answer:false, tag:"제어형 정류기", exp:"V_o = (Vm/2π)(1+cosα)에서 α가 커질수록 cosα가 감소하여 출력 평균 전압이 낮아집니다. α=0이면 최대, α=π이면 0입니다." },
-    { text:"저항 부하 제어형 반파 정류기의 평균 출력 전압은 V_o = (Vm/2π)(1+cosα)이다.", answer:true, tag:"제어형 정류기", exp:"강의자료에 명시된 공식입니다. α는 지연각(Delay Angle)으로, SCR에 게이트 신호가 인가되는 시점입니다." },
-    { text:"RL 부하 제어형 반파 정류기에서 도통각(Conduction Angle)은 β-α이다.", answer:true, tag:"제어형 정류기", exp:"도통각은 SCR이 도통되는 구간의 각도로 β-α입니다. β는 소호각(전류가 0이 되는 각도), α는 지연각입니다." },
-    { text:"제어형 반파 정류기에서 RL 소스 부하의 경우 α_min = sin⁻¹(V_dc/Vm)이다.", answer:true, tag:"제어형 정류기", exp:"SCR은 AC 전압이 DC 전압보다 클 때 순방향 바이어스됩니다. 최소 지연각은 전원 전압이 DC 전압에 도달하는 각도인 α_min = sin⁻¹(V_dc/Vm)입니다." },
-    { text:"반파 정류기 RL 부하에서 θ = tan⁻¹(ωL/R)은 임피던스 Z의 위상각이다.", answer:true, tag:"RL 부하", exp:"Z = √(R²+(ωL)²), θ = tan⁻¹(ωL/R)은 RL 직렬 회로의 임피던스 위상각입니다. 강제 응답 i_f(t) = (Vm/Z)sin(ωt-θ)에 사용됩니다." },
-    { text:"반파 정류기에서 인덕터를 추가하면 출력 전류의 평균값이 항상 감소한다.", answer:false, tag:"RL 부하", exp:"반드시 감소하는 것은 아닙니다. 인덕터는 전류 도통 구간을 늘려(β > π) 평균 전류를 증가시킬 수도 있습니다. L 크기와 R, 전원 조건에 따라 달라집니다." },
-    { text:"Ex.3-1에서 120Vrms, 60Hz, R=5Ω 조건의 반파 정류기 평균 출력전류는 Vm/(πR)이다.", answer:true, tag:"저항 부하", exp:"V_avg = Vm/π이고 I_avg = V_avg/R = Vm/(πR)입니다. Vm=120√2≈169.7V이면 I_avg ≈ 169.7/(π×5) ≈ 10.8A입니다." },
-    { text:"프리휠링 다이오드 회로에서 출력 전압의 푸리에 급수는 DC 성분, 기본파, 짝수 고조파를 포함한다.", answer:true, tag:"프리휠링 다이오드", exp:"v(t) = Vm/π + (Vm/2)sin(ω₀t) - Σ[2Vm/((n²-1)π)]cos(nω₀t) (n=2,4,6...)로 표현됩니다. DC, 기본파, 짝수 고조파 성분을 포함합니다." },
-    { text:"커패시터 필터 반파 정류기에서 커패시터 용량을 늘리면 다이오드 피크 전류가 감소한다.", answer:false, tag:"커패시터 필터", exp:"C가 클수록 리플은 줄지만, 도통 구간이 짧아지고 짧은 시간에 많은 전하를 충전해야 하므로 피크 다이오드 전류는 증가합니다. 강의자료에 명시된 트레이드오프입니다." }
+    { text:"문제 1", answer:true,  tag:"CH3", exp:"해설 1" },
+    { text:"문제 2", answer:false, tag:"CH3", exp:"해설 2" },
+    { text:"문제 3", answer:true,  tag:"CH3", exp:"해설 3" },
+    { text:"문제 4", answer:false, tag:"CH3", exp:"해설 4" },
+    { text:"문제 5", answer:true,  tag:"CH3", exp:"해설 5" },
+    { text:"문제 6", answer:false, tag:"CH3", exp:"해설 6" },
+    { text:"문제 7", answer:true,  tag:"CH3", exp:"해설 7" },
+    { text:"문제 8", answer:false, tag:"CH3", exp:"해설 8" },
+    { text:"문제 9", answer:true,  tag:"CH3", exp:"해설 9" },
+    { text:"문제 10", answer:false, tag:"CH3", exp:"해설 10" },
+    { text:"문제 11", answer:true,  tag:"CH3", exp:"해설 11" },
+    { text:"문제 12", answer:false, tag:"CH3", exp:"해설 12" },
+    { text:"문제 13", answer:true,  tag:"CH3", exp:"해설 13" },
+    { text:"문제 14", answer:false, tag:"CH3", exp:"해설 14" },
+    { text:"문제 15", answer:true,  tag:"CH3", exp:"해설 15" },
+    { text:"문제 16", answer:false, tag:"CH3", exp:"해설 16" },
+    { text:"문제 17", answer:true,  tag:"CH3", exp:"해설 17" },
+    { text:"문제 18", answer:false, tag:"CH3", exp:"해설 18" },
+    { text:"문제 19", answer:true,  tag:"CH3", exp:"해설 19" },
+    { text:"문제 20", answer:false, tag:"CH3", exp:"해설 20" },
+    { text:"문제 21", answer:true,  tag:"CH3", exp:"해설 21" },
+    { text:"문제 22", answer:false, tag:"CH3", exp:"해설 22" },
+    { text:"문제 23", answer:true,  tag:"CH3", exp:"해설 23" },
+    { text:"문제 24", answer:false, tag:"CH3", exp:"해설 24" },
+    { text:"문제 25", answer:true,  tag:"CH3", exp:"해설 25" },
+    { text:"문제 26", answer:false, tag:"CH3", exp:"해설 26" },
+    { text:"문제 27", answer:true,  tag:"CH3", exp:"해설 27" },
+    { text:"문제 28", answer:false, tag:"CH3", exp:"해설 28" },
+    { text:"문제 29", answer:true,  tag:"CH3", exp:"해설 29" },
+    { text:"문제 30", answer:false, tag:"CH3", exp:"해설 30" },
+  ],
+  4: [
+    { text:"문제 1", answer:true,  tag:"CH4", exp:"해설 1" },
+    { text:"문제 2", answer:false, tag:"CH4", exp:"해설 2" },
+    { text:"문제 3", answer:true,  tag:"CH4", exp:"해설 3" },
+    { text:"문제 4", answer:false, tag:"CH4", exp:"해설 4" },
+    { text:"문제 5", answer:true,  tag:"CH4", exp:"해설 5" },
+    { text:"문제 6", answer:false, tag:"CH4", exp:"해설 6" },
+    { text:"문제 7", answer:true,  tag:"CH4", exp:"해설 7" },
+    { text:"문제 8", answer:false, tag:"CH4", exp:"해설 8" },
+    { text:"문제 9", answer:true,  tag:"CH4", exp:"해설 9" },
+    { text:"문제 10", answer:false, tag:"CH4", exp:"해설 10" },
+    { text:"문제 11", answer:true,  tag:"CH4", exp:"해설 11" },
+    { text:"문제 12", answer:false, tag:"CH4", exp:"해설 12" },
+    { text:"문제 13", answer:true,  tag:"CH4", exp:"해설 13" },
+    { text:"문제 14", answer:false, tag:"CH4", exp:"해설 14" },
+    { text:"문제 15", answer:true,  tag:"CH4", exp:"해설 15" },
+    { text:"문제 16", answer:false, tag:"CH4", exp:"해설 16" },
+    { text:"문제 17", answer:true,  tag:"CH4", exp:"해설 17" },
+    { text:"문제 18", answer:false, tag:"CH4", exp:"해설 18" },
+    { text:"문제 19", answer:true,  tag:"CH4", exp:"해설 19" },
+    { text:"문제 20", answer:false, tag:"CH4", exp:"해설 20" },
+    { text:"문제 21", answer:true,  tag:"CH4", exp:"해설 21" },
+    { text:"문제 22", answer:false, tag:"CH4", exp:"해설 22" },
+    { text:"문제 23", answer:true,  tag:"CH4", exp:"해설 23" },
+    { text:"문제 24", answer:false, tag:"CH4", exp:"해설 24" },
+    { text:"문제 25", answer:true,  tag:"CH4", exp:"해설 25" },
+    { text:"문제 26", answer:false, tag:"CH4", exp:"해설 26" },
+    { text:"문제 27", answer:true,  tag:"CH4", exp:"해설 27" },
+    { text:"문제 28", answer:false, tag:"CH4", exp:"해설 28" },
+    { text:"문제 29", answer:true,  tag:"CH4", exp:"해설 29" },
+    { text:"문제 30", answer:false, tag:"CH4", exp:"해설 30" },
   ]
 };
+
+// ===================== 어려운 문제 데이터 =====================
+const HARD_QUESTIONS = [
+  { text:"어려운 문제 1", answer:true,  tag:"HARD", exp:"해설 1" },
+  { text:"어려운 문제 2", answer:false, tag:"HARD", exp:"해설 2" },
+  { text:"어려운 문제 3", answer:true,  tag:"HARD", exp:"해설 3" },
+  { text:"어려운 문제 4", answer:false, tag:"HARD", exp:"해설 4" },
+  { text:"어려운 문제 5", answer:true,  tag:"HARD", exp:"해설 5" },
+  { text:"어려운 문제 6", answer:false, tag:"HARD", exp:"해설 6" },
+  { text:"어려운 문제 7", answer:true,  tag:"HARD", exp:"해설 7" },
+  { text:"어려운 문제 8", answer:false, tag:"HARD", exp:"해설 8" },
+  { text:"어려운 문제 9", answer:true,  tag:"HARD", exp:"해설 9" },
+  { text:"어려운 문제 10", answer:false, tag:"HARD", exp:"해설 10" },
+  { text:"어려운 문제 11", answer:true,  tag:"HARD", exp:"해설 11" },
+  { text:"어려운 문제 12", answer:false, tag:"HARD", exp:"해설 12" },
+  { text:"어려운 문제 13", answer:true,  tag:"HARD", exp:"해설 13" },
+  { text:"어려운 문제 14", answer:false, tag:"HARD", exp:"해설 14" },
+  { text:"어려운 문제 15", answer:true,  tag:"HARD", exp:"해설 15" },
+  { text:"어려운 문제 16", answer:false, tag:"HARD", exp:"해설 16" },
+  { text:"어려운 문제 17", answer:true,  tag:"HARD", exp:"해설 17" },
+  { text:"어려운 문제 18", answer:false, tag:"HARD", exp:"해설 18" },
+  { text:"어려운 문제 19", answer:true,  tag:"HARD", exp:"해설 19" },
+  { text:"어려운 문제 20", answer:false, tag:"HARD", exp:"해설 20" },
+  { text:"어려운 문제 21", answer:true,  tag:"HARD", exp:"해설 21" },
+  { text:"어려운 문제 22", answer:false, tag:"HARD", exp:"해설 22" },
+  { text:"어려운 문제 23", answer:true,  tag:"HARD", exp:"해설 23" },
+  { text:"어려운 문제 24", answer:false, tag:"HARD", exp:"해설 24" },
+  { text:"어려운 문제 25", answer:true,  tag:"HARD", exp:"해설 25" },
+  { text:"어려운 문제 26", answer:false, tag:"HARD", exp:"해설 26" },
+  { text:"어려운 문제 27", answer:true,  tag:"HARD", exp:"해설 27" },
+  { text:"어려운 문제 28", answer:false, tag:"HARD", exp:"해설 28" },
+  { text:"어려운 문제 29", answer:true,  tag:"HARD", exp:"해설 29" },
+  { text:"어려운 문제 30", answer:false, tag:"HARD", exp:"해설 30" },
+];
 
 // ===================== 상태 변수 =====================
 let selectedChapter = null;
@@ -381,6 +459,19 @@ function selectChapter(ch) {
   });
   const btn = document.getElementById('start-btn');
   btn.classList.add('active');
+}
+
+function startHardQuiz() {
+  selectedChapter = 'hard';
+  questions = shuffle([...HARD_QUESTIONS]);
+  current = 0; score = 0; wrong = 0;
+  document.getElementById('title-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('ch-badge').textContent = '🔥 HARD';
+  document.getElementById('ch-badge').style.background = 'rgba(249,115,22,0.2)';
+  document.getElementById('ch-badge').style.color = '#f97316';
+  loadQuestion();
 }
 
 function startQuiz() {
@@ -465,10 +556,10 @@ function showResult() {
   document.getElementById('result-big').textContent=score+'점';
   document.getElementById('result-label').textContent=total+'문제 중';
   let emoji,title,sub;
-  if(rate>=90){emoji='🏆';title='완벽해요!';sub='CH'+selectedChapter+' 마스터 달성! 최근우 붕띤';}
-  else if(rate>=70){emoji='🎉';title='훌륭해요!';sub='핵심 개념을 잘 이해하고 있어요. 최근우 붕띤';}
-  else if(rate>=50){emoji='📚';title='조금 더!';sub='강의자료를 다시 복습해보세요.최근우 붕띤';}
-  else{emoji='💪';title='다시 도전!';sub='강의 필기와 예제를 다시 보고 도전해봐요. 최근우 붕띤';}
+  if(rate>=90){emoji='🏆';title='완벽해요!';sub='CH'+selectedChapter+' 마스터 달성!';}
+  else if(rate>=70){emoji='🎉';title='훌륭해요!';sub='핵심 개념을 잘 이해하고 있어요.';}
+  else if(rate>=50){emoji='📚';title='조금 더!';sub='강의자료를 다시 복습해보세요.';}
+  else{emoji='💪';title='다시 도전!';sub='강의 필기와 예제를 다시 보고 도전해봐요.';}
   document.getElementById('result-emoji').textContent=emoji;
   document.getElementById('result-title').textContent=title;
   document.getElementById('result-sub').textContent=sub;
@@ -480,6 +571,8 @@ function goHome() {
   document.getElementById('quiz-screen').style.display='none';
   document.getElementById('result-screen').style.display='none';
   document.getElementById('title-screen').style.display='block';
+  const badge = document.getElementById('ch-badge');
+  badge.style.background = ''; badge.style.color = '';
 }
 </script>
 </body>
