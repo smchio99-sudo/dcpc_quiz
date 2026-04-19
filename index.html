@@ -465,10 +465,10 @@ function showResult() {
   document.getElementById('result-big').textContent=score+'점';
   document.getElementById('result-label').textContent=total+'문제 중';
   let emoji,title,sub;
-  if(rate>=90){emoji='🏆';title='완벽해요!';sub='CH'+selectedChapter+' 마스터 달성!';}
-  else if(rate>=70){emoji='🎉';title='훌륭해요!';sub='핵심 개념을 잘 이해하고 있어요.';}
-  else if(rate>=50){emoji='📚';title='조금 더!';sub='강의자료를 다시 복습해보세요.';}
-  else{emoji='💪';title='다시 도전!';sub='강의 필기와 예제를 다시 보고 도전해봐요.';}
+  if(rate>=90){emoji='🏆';title='완벽해요!';sub='CH'+selectedChapter+' 마스터 달성! 최근우 붕띤';}
+  else if(rate>=70){emoji='🎉';title='훌륭해요!';sub='핵심 개념을 잘 이해하고 있어요. 최근우 붕띤';}
+  else if(rate>=50){emoji='📚';title='조금 더!';sub='강의자료를 다시 복습해보세요.최근우 붕띤';}
+  else{emoji='💪';title='다시 도전!';sub='강의 필기와 예제를 다시 보고 도전해봐요. 최근우 붕띤';}
   document.getElementById('result-emoji').textContent=emoji;
   document.getElementById('result-title').textContent=title;
   document.getElementById('result-sub').textContent=sub;
